@@ -1,146 +1,53 @@
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from django.contrib.auth import get_user_model
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_str
-from django.core.mail import send_mail
-from django.conf import settings
-import random
+from .models import CustomUser
+from django.contrib.auth.password_validation import validate_password
 
-User = get_user_model()
+from rest_framework import serializers
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+from .models import CustomUser
 
 class UserSerializer(serializers.ModelSerializer):
-    '''Serializer for CustomUser model'''
-    class Meta:
-        model = User
-        fields = ('id', 'username', 'email', 'full_name', 'is_trial', 'trial_end_date', 'is_verified')
-
-class RegisterSerializer(serializers.ModelSerializer):
-    ''''
-    Serializer for user registration
-    Validates password and handles OTP generation
-    '''
-    password = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True, validators=[validate_password])
     confirm_password = serializers.CharField(write_only=True)
-    
+    full_name = serializers.CharField(required=True)
+
     class Meta:
-        model = User
-        fields = ('username', 'email', 'full_name', 'password', 'confirm_password')
-        
+        model = CustomUser
+        fields = ('id', 'email', 'password', 'confirm_password', 'full_name', 'is_active', 'trial_end_date')
+        read_only_fields = ('is_active', 'trial_end_date')
+
     def validate(self, data):
-        '''Ensure password match'''
+        """
+        Check that the two password entries match.
+        """
         if data['password'] != data['confirm_password']:
-            raise serializers.ValidationError("Passwords do not match")
+            raise serializers.ValidationError({"confirm_password": "Passwords do not match."})
         return data
-    
+
     def create(self, validated_data):
-        '''Create user and generate OTP'''
-        user = User.objects.create_user(
-            username=validated_data['username'],
+   
+        validated_data.pop('confirm_password')
+        user = CustomUser.objects.create_user(
             email=validated_data['email'],
-            full_name=validated_data['full_name'],
             password=validated_data['password'],
-        )
-        user.otp = str(random.randint(100000, 999999))
-        user.save()
-        # Send Otp to user email
-        send_mail(
-            'Email Verfication',
-            f'Your Otp code is {user.otp}',
-            settings.EMAIL_HOST_USER,
-            [user.email]
+            full_name=validated_data.get('full_name', '')
         )
         return user
-    
-class VerifyOTPSerializer(serializers.Serializer):
-    """Serializer for OTP verification"""
+
+class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
-    otp =serializers.CharField(max_length=6)
-    
-    def validate(self, data):
-        """Validate email and otp"""
-        try:
-            user = User.objects.get(email=data['email'], otp=data['otp'])
-        except User.DoesNotExist:
-            raise serializers.ValidationError("invalid otp or email")
-        return data
-    
-    def save(self, validated_data):
-        """Activate user and set trial end date"""
-        user = User.objects.get(email=validated_data['email'])
-        user.is_verified = True
-        user.set_trial_end_date()
-        user.save()
-        return user
-    
-class PasswordResetRequestSerializer(serializers.Serializer):
-    """Serializer for password reset request"""
-    email = serializers.EmailField()
-    
-    def validate_email(self, value):
-        """Validate if the user with the given email exist"""
-        try:
-            user= User.objects.get(email=value)
-        except User.DoesNotExist:
-            raise serializers.ValidationError("User with this email does not exist.")
-        return value
-    
-    def save(self):
-        """ Generate  password reset token and send email"""
-        email = self.validated_data['email']
-        user = User.objects.get(email=email)
-        token = PasswordResetTokenGenerator().make_token(user)
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
-        reset_link = f"{settings.FRONTEND_URL}/reset-password/{uid}/{token}/"
-        send_mail(
-            'Password Reset Request',
-            f'Click the link to reset your password: {reset_link}',
-            settings.EMAIL_HOST_USER,
-            [email]
-        )
-        
+    password = serializers.CharField()
+
 class PasswordResetSerializer(serializers.Serializer):
-    """ Serrializer for password reset"""
-    uid =serializers.CharField()
+    email = serializers.EmailField()
+    is_forgotten_password = serializers.BooleanField(default=False)
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    password = serializers.CharField(validators=[validate_password])
     token = serializers.CharField()
-    new_password = serializers.CharField(write_only=True)
-    confirm_password = serializers.CharField(write_only=True)
+    uid = serializers.CharField()
+    is_forgotten_password = serializers.BooleanField(default=False)
     
-    def validate(self, data):
-        """validate password reset token and password match"""
-        if data['new_password'] != data['confirm_password']:
-            raise serializers.ValidationError("Passwords do not match")
-        try:
-            uid = force_str(urlsafe_base64_decode(data['uid']))
-            self.user = User.objects.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-            raise serializers.ValidationError("Invalid reset link")
-        if not PasswordResetTokenGenerator().check_token(self.user, data['token']):
-            raise serializers.ValidationError("Invalid or expired token")
-        return data
-    
-    def save(self):
-        """ Set new password for user"""
-        self.user.set_password(self.validated_data['new_password'])
-        self.user.save()
-
-
-class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    """
-    Serializer for obtaining JWT tokens with additional user data.
-    """
-    def validate(self, attrs):
-        """
-        Validate user credentials and add custom data to the token response.
-        """
-        data = super().validate(attrs)
-
-        # Add custom data to the token response
-        data.update({
-            'user_id': self.user.id,
-            'email': self.user.email,
-            'full_name': self.user.full_name,
-        })
-
-        return data
+class LogoutSerializer(serializers.Serializer):
+    refresh_token = serializers.CharField()

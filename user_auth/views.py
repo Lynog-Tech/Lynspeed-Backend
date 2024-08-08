@@ -1,137 +1,155 @@
-from rest_framework import generics,viewsets, mixins, permissions, status
+from django.conf import settings
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import send_mail
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.decorators import action
-from django.contrib.auth import get_user_model, logout
-from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import *
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
+from .models import CustomUser
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
+from .serializers import (
+    UserSerializer, LoginSerializer, PasswordResetSerializer,
+    PasswordResetConfirmSerializer, LogoutSerializer
+)
+from .tokens import account_activation_token, password_reset_token_generator
 
-User = get_user_model()
-
-class UserViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
-    """
-    Viewsets for User Registration and OTP verification
-    """
-    queryset = User.objects.all()
-    serializer_class = RegisterSerializer
-
-    @swagger_auto_schema(
-        operation_description="Register a new user",
-        request_body=RegisterSerializer,
-        responses={201: UserSerializer()}
-    )
-    @action(detail=False, methods=['post'], url_path='register')
-    def register(self, request):
-        """Handle User registration"""
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            return Response({"detail": "User registered successfully. Please verify your email."}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="Verify OTP",
-        request_body=VerifyOTPSerializer,
-        responses={200: openapi.Response("OTP verified and trial activated")}
-    )
-    @action(detail=False, methods=['post'], url_path='verify-otp')
-    def verify_otp(self, request):
-        """Handle OTP verification"""
-        serializer = VerifyOTPSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"detail": "OTP verified and trial activated"}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-class CustomTokenObtainPairView(TokenObtainPairView):
-    """View for user login"""
-    serializer_class = CustomTokenObtainPairSerializer
-    @swagger_auto_schema(
-        operation_description="Login a user",
-        request_body= CustomTokenObtainPairSerializer,
-        responses={201: UserSerializer()}
-    )
-    @action(detail=False, methods=['post'], url_path='register')
-    def post(self, request, *args, **kwargs):
-        """Handle user Login"""
-        return super().post(request, *args, **kwargs)
-class ProfileView(generics.RetrieveUpdateAPIView):
-    """
-    View to retrieve and update user profile.
-    """
-    queryset = User.objects.all()
+class RegisterView(generics.CreateAPIView):
+    queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [AllowAny] 
 
-    def get_object(self):
-        """
-        Return the authenticated user.
-        """
-        return self.request.user
-
-class PasswordResetRequestView(generics.GenericAPIView):
-    """
-    View to handle password reset request.
-    """
-    serializer_class = PasswordResetRequestSerializer
-
-    @swagger_auto_schema(
-        operation_description="Request password reset.",
-        request_body=PasswordResetRequestSerializer,
-        responses={200: openapi.Response('Password reset link sent.')}
-    )
-    def post(self, request, *args, **kwargs):
-        """
-        Handle password reset request.
-        """
+    def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"detail": "Password reset link sent."}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+
+        # Generate activation token
+        token = account_activation_token.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+        # Generate the verification link
+        current_site = get_current_site(request)
+        verification_link = f'http://{current_site.domain}/verify-email/{uid}/{token}/'
+
+        # Send the verification email
+        email_subject = 'Activate your account'
+        email_body = f'Please click the link to verify your email: {verification_link}'
+        send_mail(
+            email_subject,
+            email_body,
+            settings.EMAIL_HOST_USER,
+            [user.email],
+            fail_silently=False,
+        )
+
+        # Generate and return access and refresh tokens
+        refresh = RefreshToken.for_user(user)
+        data = {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        }
+        return Response(data, status=status.HTTP_201_CREATED)
+    
+
+
+class VerifyEmailView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, uidb64, token, *args, **kwargs):
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = CustomUser.objects.get(pk=uid)
+
+            if account_activation_token.check_token(user, token):
+                user.is_active = True
+                user.save()
+                return Response({'message': 'Email verification successful'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'Invalid or expired token'}, status=status.HTTP_400_BAD_REQUEST)
+
+        except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist) as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+   
+
+class LoginView(generics.GenericAPIView):
+    serializer_class = LoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = CustomUser.objects.filter(email=serializer.validated_data['email']).first()
+        if user and user.check_password(serializer.validated_data['password']):
+            refresh = RefreshToken.for_user(user)
+            data = {
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+            }
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Invalid email or password'}, status=status.HTTP_401_UNAUTHORIZED)
 
 class PasswordResetView(generics.GenericAPIView):
-    """
-    View to handle password reset.
-    """
     serializer_class = PasswordResetSerializer
 
-    @swagger_auto_schema(
-        operation_description="Reset password.",
-        request_body=PasswordResetSerializer,
-        responses={200: openapi.Response('Password has been reset.')}
-    )
     def post(self, request, *args, **kwargs):
-        """
-        Handle password reset.
-        """
         serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"detail": "Password has been reset."}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
 
-class LogoutView(generics.GenericAPIView):
-    """
-    View to handle user logout.
-    """
-    permission_classes = [permissions.IsAuthenticated]
+        user = CustomUser.objects.filter(email=serializer.validated_data['email']).first()
+        if user:
+            token = password_reset_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
 
-    @swagger_auto_schema(
-        operation_description="Logout user by blacklisting their refresh token.",
-        responses={200: openapi.Response('Logout successful.')}
-    )
+            if serializer.validated_data['is_forgotten_password']:
+                reset_link = f'http://{get_current_site(request).domain}/reset-password/{uid}/{token}/'
+            else:
+                reset_link = f'http://{get_current_site(request).domain}/password-reset-confirm/{uid}/{token}/'
+
+            email_subject = 'Password Reset'
+            email_body = f'Click the link to reset your password: {reset_link}'
+            send_mail(
+                email_subject,
+                email_body,
+                settings.EMAIL_HOST_USER,
+                [user.email],
+                fail_silently=False,
+            )
+
+        return Response({'message': 'Password reset instructions have been sent to your email'}, status=status.HTTP_200_OK)
+
+class PasswordResetConfirmView(generics.GenericAPIView):
+    serializer_class = PasswordResetConfirmSerializer
+
     def post(self, request, *args, **kwargs):
-        """
-        Handle user logout.
-        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        uid = force_str(urlsafe_base64_decode(serializer.validated_data['uid']))
+        user = CustomUser.objects.get(pk=uid)
+
+        if user and password_reset_token_generator.check_token(user, serializer.validated_data['token']):
+            user.set_password(serializer.validated_data['password'])
+            user.save()
+            if serializer.validated_data['is_forgotten_password']:
+                return Response({'message': 'Password reset successful'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'message': 'Password updated successfully'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Invalid token or user'}, status=status.HTTP_400_BAD_REQUEST)
+        
+class LogoutView(generics.GenericAPIView):
+    serializer_class = LogoutSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         try:
-            refresh_token = request.data["refresh"]
+            refresh_token = serializer.validated_data['refresh_token']
             token = RefreshToken(refresh_token)
             token.blacklist()
-            logout(request)
-            return Response({"detail": "Logout successful."}, status=status.HTTP_200_OK)
+            return Response({'message': 'Logout successful'}, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
