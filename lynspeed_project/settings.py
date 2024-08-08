@@ -34,18 +34,33 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+   
+]
+
+THIRD_PARTY_APPS = [
+    "rest_framework",
+    "drf_yasg",
+    "corsheaders",
+    'rest_framework_simplejwt'
+]
+
+LOCAL_APPS = [
     'user_auth',
     'subscriptionApp',
     'questionBank',
-    'drf_yasg',
-    'rest_framework',
+    
+
 ]
+
+INSTALLED_APPS += THIRD_PARTY_APPS + LOCAL_APPS
+   
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -176,3 +191,28 @@ SIMPLE_JWT = {
 
 # Custom user model configuration
 AUTH_USER_MODEL = 'user_auth.CustomUser'
+
+
+CORS_ORIGIN_WHITELIST = [
+    
+]
+
+CORS_ALLOW_METHODS = [
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'OPTIONS',
+    ]
+
+CORS_ALLOW_HEADERS = [
+    'authorization',
+    'content-type',
+    'accept',
+    'origin',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+CORS_ALLOW_CREDENTIALS = True
