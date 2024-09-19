@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Load Excel file
-file_path = r'C:\Users\DELL\Documents\chibuike\past questions.xlsx'
+file_path = r'C:\Users\DELL\Documents\chibuike\data\subject\biology.xlsx'
 excel_file = pd.ExcelFile(file_path)
 
 # Print all sheet names

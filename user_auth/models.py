@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from datetime import datetime, timedelta
+from django.core.cache import cache
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -33,3 +34,37 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+    
+    @classmethod
+    def get_user_by_email(cls, email):
+        """Retrieve user from cache or database by email."""
+        cache_key = f"user_email_{email}"
+        user = cache.get(cache_key)
+        if not user:
+            user = cls.objects.filter(email=email).first()
+            if user:
+                cache.set(cache_key, user, timeout=300)
+        return user
+
+    @classmethod
+    def get_user_by_id(cls, user_id):
+        """Retrieve user from cache or database by ID."""
+        cache_key = f"user_id_{user_id}"
+        user = cache.get(cache_key)
+        if not user:
+            user = cls.objects.filter(id=user_id).first()
+            if user:
+                cache.set(cache_key, user, timeout=300)
+        return user
+
+    def save(self, *args, **kwargs):
+        """Override save method to clear cache when user is updated."""
+        super().save(*args, **kwargs)
+        cache.delete(f"user_email_{self.email}")
+        cache.delete(f"user_id_{self.id}")
+
+    def delete(self, *args, **kwargs):
+        """Override delete method to clear cache when user is deleted."""
+        cache.delete(f"user_email_{self.email}")
+        cache.delete(f"user_id_{self.id}")
+        super().delete(*args, **kwargs)

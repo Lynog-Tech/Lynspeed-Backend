@@ -1,10 +1,6 @@
 from rest_framework import serializers
-from .models import CustomUser
 from django.contrib.auth.password_validation import validate_password
-
-from rest_framework import serializers
-from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ValidationError
+from rest_framework_simplejwt.tokens import RefreshToken
 from .models import CustomUser
 
 class UserSerializer(serializers.ModelSerializer):
@@ -14,8 +10,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ('id', 'email', 'password', 'confirm_password', 'full_name', 'is_active', 'trial_end_date')
-        read_only_fields = ('is_active', 'trial_end_date')
+        fields = ('id', 'email', 'password', 'confirm_password', 'full_name', 'is_active')
+        read_only_fields = ['is_active']
 
     def validate(self, data):
         """
@@ -34,6 +30,23 @@ class UserSerializer(serializers.ModelSerializer):
             full_name=validated_data.get('full_name', '')
         )
         return user
+    
+class UserSerializerWithToken(serializers.ModelSerializer):
+    email = serializers.EmailField(source='username', read_only=True)
+    refresh = serializers.SerializerMethodField()
+    access = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CustomUser
+        fields = ('email', 'is_active', 'refresh', 'access')
+
+    def get_refresh(self, obj):
+        token = RefreshToken.for_user(obj)
+        return str(token)
+
+    def get_access(self, obj):
+        token = RefreshToken.for_user(obj)
+        return str(token.access_token)   
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -46,8 +59,7 @@ class PasswordResetSerializer(serializers.Serializer):
 class PasswordResetConfirmSerializer(serializers.Serializer):
     password = serializers.CharField(validators=[validate_password])
     token = serializers.CharField()
-    uid = serializers.CharField()
-    is_forgotten_password = serializers.BooleanField(default=False)
+    
     
 class LogoutSerializer(serializers.Serializer):
     refresh_token = serializers.CharField()
