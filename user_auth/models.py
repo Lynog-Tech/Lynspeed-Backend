@@ -20,12 +20,20 @@ class UserManager(BaseUserManager):
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
-    full_name = models.CharField(max_length=255, blank=True, null=True)
+    full_name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    trial_end_date = models.DateTimeField(default=datetime.now() + timedelta(days=1))
+    
+    # Free trial logic
+    trial_count = models.IntegerField(default=2)
+    trial_end_date = models.DateTimeField(default=lambda: datetime.now() + timedelta(days=1))
+
+    # Subscription logic
+    subscribed = models.BooleanField(default=False)
+    subscription_start_date = models.DateTimeField(null=True, blank=True)
+    subscription_end_date = models.DateTimeField(null=True, blank=True)
 
     objects = UserManager()
 
@@ -34,7 +42,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
-    
+
     @classmethod
     def get_user_by_email(cls, email):
         """Retrieve user from cache or database by email."""

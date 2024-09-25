@@ -1,16 +1,17 @@
 from django.urls import path
-from .views import PlanListCreateView, PlanDetailView, SubscriptionListCreateView, SubscriptionDetailView, PaymentListCreateView, PaymentDetailView
+from subscriptionApp.views.views import PlanListView, SubscriptionView, SubscriptionActivateView 
+from subscriptionApp.views.payment_views import InitializePaymentView, PaymentListView, VerifyPaymentView
 
 urlpatterns = [
     # Plan URLs
-    path('plans/', PlanListCreateView.as_view(), name='plan-list-create'),
-    path('plans/<int:pk>/', PlanDetailView.as_view(), name='plan-detail'),
-
-    # Subscription URLs
-    path('subscriptions/', SubscriptionListCreateView.as_view(), name='subscription-list-create'),
-    path('subscriptions/<int:pk>/', SubscriptionDetailView.as_view(), name='subscription-detail'),
+    path('plans/', PlanListView.as_view(), name='plan-list'),
+    path('subscription/', SubscriptionView.as_view(), name='subscription'),
+    path('subscription/activate/', SubscriptionActivateView.as_view(), name='subscription-activate'),
+    
 
     # Payment URLs
-    path('payments/', PaymentListCreateView.as_view(), name='payment-list-create'),
-    path('payments/<int:pk>/', PaymentDetailView.as_view(), name='payment-detail'),
+    path('payment/initialize/', InitializePaymentView.as_view(), name='initialize-payment'),
+    path('payment/verify/', VerifyPaymentView.as_view(), name='verify-payment'),
+    path('payment/history/', PaymentListView.as_view(), name='payment-history'),
+
 ]

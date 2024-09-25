@@ -10,7 +10,7 @@ from ..utils import format_error_response
 class UserSubjectPreferenceView(APIView):
     """
     API endpoint to allow users to set their subject preferences.
-    Users can select 5 subjects, including English as compulsory.
+    Users can select 4 subjects, including English as compulsory.
     """
     permission_classes = [IsAuthenticated]
 
@@ -30,15 +30,15 @@ class UserSubjectPreferenceView(APIView):
         user = request.user
         subjects = request.data.get('subjects', [])
 
-        if len(subjects) != 5 or 'English' not in subjects:
+        if len(subjects) != 4 or 'English' not in subjects:
             return Response(format_error_response(
                 status.HTTP_400_BAD_REQUEST, 
                 "INVALID_SUBJECT_SELECTION", 
-                "You must select exactly 5 subjects, including English."
+                "You must select exactly 4 subjects, including English."
             ))
 
         selected_subjects = Subject.objects.filter(name__in=subjects)
-        if selected_subjects.count() != 5:
+        if selected_subjects.count() != 4:
             return Response(format_error_response(
                 status.HTTP_400_BAD_REQUEST, 
                 "INVALID_SUBJECTS", 

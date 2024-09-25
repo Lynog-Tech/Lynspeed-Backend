@@ -155,5 +155,61 @@ class UserTests(APITestCase):
         except AssertionError as e:
             logger.error(f"test_logout_user FAILED: {e}")
             raise
+class UserTests(APITestCase):
+    # Existing setup...
 
+    def test_get_user_profile(self):
+        url = reverse('user_profile')
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(url)
+        
+        try:
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.data['email'], 'testuser@example.com')
+            logger.info("test_get_user_profile PASSED")
+        except AssertionError as e:
+            logger.error(f"test_get_user_profile FAILED: {e}")
+            raise
+
+    def test_update_user_profile(self):
+        url = reverse('user_profile')
+        self.client.force_authenticate(user=self.user)
+        data = {'full_name': 'Updated User'}
+        response = self.client.put(url, data, format='json')
+
+        try:
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.user.refresh_from_db()
+            self.assertEqual(self.user.full_name, 'Updated User')
+            logger.info("test_update_user_profile PASSED")
+        except AssertionError as e:
+            logger.error(f"test_update_user_profile FAILED: {e}")
+            raise
+
+    def test_update_user_profile_invalid_data(self):
+        url = reverse('user_profile')
+        self.client.force_authenticate(user=self.user)
+        data = {'email': 'not-an-email'}  # Invalid email
+        response = self.client.put(url, data, format='json')
+
+        try:
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+            logger.info("test_update_user_profile_invalid_data PASSED")
+        except AssertionError as e:
+            logger.error(f"test_update_user_profile_invalid_data FAILED: {e}")
+            raise
+
+    def test_get_subscription_status(self):
+        url = reverse('subscription_status')
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(url)
+
+        try:
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            logger.info("test_get_subscription_status PASSED")
+        except AssertionError as e:
+            logger.error(f"test_get_subscription_status FAILED: {e}")
+            raise
+
+    
 
