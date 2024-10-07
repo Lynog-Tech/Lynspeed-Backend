@@ -1,7 +1,11 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.core.cache import cache
+from django.utils import timezone
+
+def default_trial_end_date():
+    return timezone.now() + timedelta(days=1)
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -28,7 +32,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     
     # Free trial logic
     trial_count = models.IntegerField(default=2)
-    trial_end_date = models.DateTimeField(default=lambda: datetime.now() + timedelta(days=1))
+    trial_end_date = models.DateTimeField(default=default_trial_end_date)  
 
     # Subscription logic
     subscribed = models.BooleanField(default=False)

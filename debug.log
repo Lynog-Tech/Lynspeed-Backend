@@ -5407,3 +5407,211 @@ Traceback (most recent call last):
                              ^^^^^^^^^^^^^^^^^^
 AttributeError: 'CustomUser' object has no attribute 'username'
 "GET /admin/questionBank/testsession/ HTTP/1.1" 500 422333
+Bad Request: /api/v1/records/
+Bad Request: /api/v1/records/
+Bad Request: /api/v1/records/
+Bad Request: /api/v1/records/
+Internal Server Error: /api/v1/records/
+Traceback (most recent call last):
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\generics.py", line 246, in post
+    return self.create(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\mixins.py", line 19, in create
+    self.perform_create(serializer)
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\mixins.py", line 24, in perform_create
+    serializer.save()
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\serializers.py", line 208, in save
+    self.instance = self.create(validated_data)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\serializers.py", line 975, in create
+    raise_errors_on_nested_writes('create', self, validated_data)
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\serializers.py", line 840, in raise_errors_on_nested_writes
+    assert not any(
+AssertionError: The `.create()` method does not support writable nested fields by default.
+Write an explicit `.create()` method for serializer `PerformanceApp.serializers.PerformanceRecordSerializer`, or set `read_only=True` on nested serializer fields.
+Internal Server Error: /api/v1/records/8/
+Traceback (most recent call last):
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\generics.py", line 292, in patch
+    return self.partial_update(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\mixins.py", line 82, in partial_update
+    return self.update(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\mixins.py", line 68, in update
+    self.perform_update(serializer)
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\mixins.py", line 78, in perform_update
+    serializer.save()
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\serializers.py", line 203, in save
+    self.instance = self.update(self.instance, validated_data)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\Desktop\Lyn\Lynspeed-Backend\PerformanceApp\serializers.py", line 27, in update
+    subject_data = validated_data.pop('subject')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'subject'
+Internal Server Error: /api/v1/records/8/
+Traceback (most recent call last):
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\generics.py", line 292, in patch
+    return self.partial_update(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\mixins.py", line 82, in partial_update
+    return self.update(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\mixins.py", line 68, in update
+    self.perform_update(serializer)
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\mixins.py", line 78, in perform_update
+    serializer.save()
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\serializers.py", line 203, in save
+    self.instance = self.update(self.instance, validated_data)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\Desktop\Lyn\Lynspeed-Backend\PerformanceApp\serializers.py", line 27, in update
+    subject_data = validated_data.pop('subject')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'subject'
+Internal Server Error: /api/v1/records/8/
+Traceback (most recent call last):
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\generics.py", line 292, in patch
+    return self.partial_update(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\mixins.py", line 82, in partial_update
+    return self.update(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\mixins.py", line 68, in update
+    self.perform_update(serializer)
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\mixins.py", line 78, in perform_update
+    serializer.save()
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\serializers.py", line 203, in save
+    self.instance = self.update(self.instance, validated_data)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\Desktop\Lyn\Lynspeed-Backend\PerformanceApp\serializers.py", line 33, in update
+    subject_data = validated_data.pop('subject')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'subject'
+Internal Server Error: /api/v1/records/8/
+Traceback (most recent call last):
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\generics.py", line 292, in patch
+    return self.partial_update(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\mixins.py", line 82, in partial_update
+    return self.update(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\mixins.py", line 68, in update
+    self.perform_update(serializer)
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\mixins.py", line 78, in perform_update
+    serializer.save()
+  File "C:\Users\DELL\.virtualenvs\Lynspeed-Backend-ImVY9XrO\Lib\site-packages\rest_framework\serializers.py", line 203, in save
+    self.instance = self.update(self.instance, validated_data)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\Desktop\Lyn\Lynspeed-Backend\PerformanceApp\serializers.py", line 39, in update
+    instance.subject = subject
+                       ^^^^^^^
+UnboundLocalError: cannot access local variable 'subject' where it is not associated with a value

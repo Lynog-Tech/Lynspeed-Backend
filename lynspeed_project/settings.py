@@ -61,6 +61,7 @@ LOCAL_APPS = [
     'user_auth',
     'subscriptionApp',
     'questionBank',
+    'PerformanceApp'
     
 
 ]
