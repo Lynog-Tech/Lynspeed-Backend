@@ -3,9 +3,9 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from user_auth.views.user_views import RegisterView, LoginView, VerifyEmailView, LogoutView
-from user_auth.views.password_views import PasswordResetView, PasswordResetConfirmView
-from user_auth.views.profile_subscription_view import UserProfileView, UserSubscriptionStatusView
+from .user_views import RegisterView, LoginView, VerifyEmailView, LogoutView
+from .password_views import PasswordResetView, PasswordResetConfirmView
+from .profile_subscription_view import UserProfileView, UserSubscriptionStatusView
 
 
 urlpatterns = [
