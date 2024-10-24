@@ -5,8 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from ..models import CustomUser
-from ..serializers import UserSerializer
+from .models import CustomUser
+from .serializers import UserSerializer
 from .base_views import BaseUserView, logger
 
 class UserProfileView(BaseUserView):

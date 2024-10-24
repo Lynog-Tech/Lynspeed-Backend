@@ -11,10 +11,10 @@ from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from ..models import CustomUser
-from ..serializers import PasswordResetSerializer
+from .models import CustomUser
+from .serializers import PasswordResetSerializer
 
-from ..tokens import password_reset_token_generator
+from .tokens import password_reset_token_generator
 from .base_views import BaseUserView
 from .utils import format_error_response,get_user_by_email, send_email,decode_uid, logger
 
@@ -71,6 +71,8 @@ class PasswordResetConfirmView(BaseUserView):
     @swagger_auto_schema(
         operation_description="Render password reset form for a given token and user ID."
     )
+    def get_serializer_class(self):
+        return None 
     def get(self, request, uidb64, token, *args, **kwargs):
         try:
             uid = decode_uid(uidb64)

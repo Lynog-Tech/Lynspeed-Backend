@@ -10,8 +10,8 @@ from drf_yasg import openapi
 
 from itsdangerous import SignatureExpired, BadSignature
 
-from ..models import CustomUser
-from ..serializers import ( UserSerializer, LoginSerializer,LogoutSerializer)
+from .models import CustomUser
+from .serializers import ( UserSerializer, LoginSerializer,LogoutSerializer)
 
 from .base_views import BaseUserView, settings
 from .utils import format_error_response,get_user_by_email, verify_token, logger
